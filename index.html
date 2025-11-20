@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Lock Project</title>
+<style>
+/* Reset y fuente */
+* { margin:0; padding:0; box-sizing:border-box; font-family: 'Orbitron', sans-serif; }
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+body { background:#0b0b14; color:#fff; overflow-x:hidden; position:relative; }
+
+/* Fondo animado */
+#flower-bg { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; overflow:hidden; }
+.flower { 
+  position:absolute;
+  top:-20px;
+  width:10px; height:10px;
+  background: linear-gradient(white, #0ff);
+  border-radius:50%;
+  opacity:0.8;
+  box-shadow: 0 0 10px #0ff;
+  animation-name:fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes fall { 0% { transform: translateY(-20px) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
+
+/* Botón de música */
+#music-btn { 
+  position:fixed; top:20px; left:20px; background: linear-gradient(90deg,#0ff,#00f);
+  color:#fff; padding:12px 18px; border-radius:15px; border:none; cursor:pointer;
+  z-index:1000; font-weight:bold; text-shadow:0 0 5px #0ff; transition:0.3s;
+}
+#music-btn:hover { transform: scale(1.1); box-shadow:0 0 20px #0ff; }
+
+/* Loader */
+#loader { display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; width:100%; background: radial-gradient(circle at center, #0b0b14, #000); }
+.loader-text { font-size:2rem; color:#0ff; text-shadow: 0 0 10px #0ff, 0 0 20px #00f; margin-bottom:20px; letter-spacing:2px; }
+.loader-bar { width:70%; height:25px; background:#111; border-radius:15px; overflow:hidden; box-shadow:0 0 10px #0ff inset; }
+.loader-fill { height:100%; width:0%; background:linear-gradient(90deg,#0ff,#00f); border-radius:15px; transition:width 0.3s ease; }
+
+/* Contenido principal */
+.hidden { display:none; }
+.profile { text-align:center; padding:50px 20px; position: relative; z-index:1; }
+.profile-img img { width:220px; height:220px; object-fit:cover; border:6px solid #0ff; border-radius:50%; box-shadow: 0 0 20px #0ff, 0 0 40px #00f; animation: fadeIn 1.5s ease; margin-bottom:20px; }
+.profile h1 { font-size:2.5rem; color:#0ff; text-shadow: 0 0 10px #0ff, 0 0 20px #00f; margin-bottom:10px; }
+.profile h2 { font-size:1.8rem; color:#fff; text-shadow:0 0 8px #0ff; margin-bottom:20px; }
+hr { border:1px solid #0ff; margin:25px 0; opacity:0.6; }
+
+ul { list-style:none; text-align:left; display:inline-block; }
+ul li { margin:10px 0; font-size:1.2rem; }
+.stat-number { display:inline-block; min-width:40px; font-weight:bold; color:#0ff; }
+.stat-bar { height:15px; background:#111; border-radius:10px; overflow:hidden; margin:5px 0; box-shadow: 0 0 5px #0ff inset; }
+.stat-fill { height:100%; width:0%; background: linear-gradient(90deg,#0ff,#00f); border-radius:10px; }
+
+/* Contenedor de columnas */
+.columns { max-width:800px; margin:60px auto; display:flex; flex-direction:column; gap:30px; }
+.column { background: rgba(0,0,0,0.5); padding:20px; border-radius:20px; box-shadow:0 0 30px #0ff; display:flex; flex-direction:column; align-items:center; gap:15px; text-align:center; transition:0.3s; }
+.column img { width:200px; border:3px solid #0ff; border-radius:15px; box-shadow:0 0 15px #0ff; }
+.column .info h3 { color:#0ff; text-shadow:0 0 10px #0ff; margin-bottom:10px; }
+.column .info p { color:#fff; font-size:1.1rem; white-space: pre-wrap; }
+
+/* Hover épico para columnas */
+.column:hover {
+  box-shadow:0 0 50px #0ff, 0 0 80px #00f;
+  transform: scale(1.05);
+}
+
+/* Animación fade-in */
+@keyframes fadeIn { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
+
+@media(max-width:768px){
+  .profile-img img { width:150px; height:150px; }
+  .profile h1 { font-size:2rem; }
+  .profile h2 { font-size:1.2rem; }
+  .column img { width:150px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Fondo -->
+<div id="flower-bg"></div>
+
+<!-- Música -->
+<button id="music-btn">🎵 Reproducir</button>
+<audio id="music" src="Lil Peep - Nuts (Lyrics).mp3"></audio>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-text">Cargando... <span id="percent">0%</span></div>
+  <div class="loader-bar"><div class="loader-fill" id="loader-fill"></div></div>
+</div>
+
+<!-- Contenido principal -->
+<div id="main-content" class="hidden">
+  <section class="profile">
+    <div class="profile-img"><img src="imagen1.png" alt="Yoshiko Isagi"></div>
+    <h1>BLUE LOCK PROJECT</h1>
+    <h2>STATS</h2>
+    <ul>
+      <li>Pase: <span class="stat-number" data-target="78">0</span>
+        <div class="stat-bar"><div class="stat-fill" data-fill="78"></div></div>
+      </li>
+      <li>Tiro: <span class="stat-number" data-target="113">0</span>
+        <div class="stat-bar"><div class="stat-fill" data-fill="113"></div></div>
+      </li>
+      <li>Físico: <span class="stat-number" data-target="72">0</span>
+        <div class="stat-bar"><div class="stat-fill" data-fill="72"></div></div>
+      </li>
+      <li>Regate: <span class="stat-number" data-target="79">0</span>
+        <div class="stat-bar"><div class="stat-fill" data-fill="79"></div></div>
+      </li>
+      <li>Defensa: <span class="stat-number" data-target="55">0</span>
+        <div class="stat-bar"><div class="stat-fill" data-fill="55"></div></div>
+      </li>
+      <li>Velocidad: <span class="stat-number" data-target="81">0</span>
+        <div class="stat-bar"><div class="stat-fill" data-fill="81"></div></div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Columnas de jugadores -->
+  <section class="columns">
+    <div class="column">
+      <img src="imagen2.png" alt="Reo Mikage U20">
+      <div class="info">
+        <h3>Reo Mikage U20</h3>
+        <p>EDICIÓN DE BLUE LOCK ELEVEN VS SUB 20 DE JAPÓN
+
+Estilo y Adaptación del Camaleón de Reo Mikage
+
+Legendario
+
+(Pasiva de Estilo – Pase)
+
+Eres un jugador nacido para adaptarse al entorno que te rodea. Tu talento radica en la versatilidad absoluta, capaz de ocupar cualquier zona del campo con total soltura, analizando cada jugada con tu conciencia espacial y traduciéndose en decisiones efectivas que elevan la fluidez del equipo. No importa si es defensa, centrocampista o delantero, todo se te da bien. Gracias a tu visión de campo avanzada y lectura del juego, tus estadísticas base se ven potenciadas por una conciencia espacial otorgando un aumento pasivo de +5 puntos en todas tus estadísticas. Tu control del juego te permite distribuir y desequilibrar con precisión quirúrgica, por lo que Pase y Regate se ven aumentados en +11 puntos inicialmente. Tiro, Defensa, Físico y Velocidad se ven aumentados en +8 puntos. Como efecto acumulable, cada vez que venzas en un duelo (con o sin ruleta), Pase y Regate aumentan en +6 puntos hasta 3 veces. Además, reduces -13 puntos en defensa enemiga en encuentros de Pase vs Defensa y Regate vs Defensa una vez ganes la acumulable máximo. Tus pases pueden tomar curvatura libre sin alterar su precisión, y al ejecutar pases a larga distancia, solo sufres un 35% de reducción por distancia, a diferencia del 50% convencional. Pero lo que te vuelve verdaderamente letal es tu capacidad de replicar jugadas ajenas: Tienes la habilidad de copiar cualquier jugada de otro jugador dentro del campo (ya sea una jugada de Genio, de alto rendimiento o estilo único) y reproducirla perfectamente, ganando +5 puntos en la estadística central que la jugada representa (ya sea Pase, Tiro, Defensa, Regate, Físico o Velocidad). Este aumento permanece indefinidamente, pero no puedes volver a replicar una jugada para seguir acumulando la misma estadística. Sin embargo, puedes repetir el proceso en otra categoría distinta (por ejemplo, primero en Tiro, luego en Defensa). Aunque tu capacidad de réplica tiene sus límites: no puedes copiar pasivas ni jugadas exclusivas de jugadores del New Gen Eleven, tampoco de Físico ni Velocidad. Sin embargo, tienes la capacidad para adaptarte al estilo salvaje y explosivo del demonio Ryusei Shidou, la técnica precisa y control absoluto de Seishiro Nagi, así como las capacidades defensivas de un jugador de categoría primera división como Oliver Aiku.
+
+Camaleón
+
+Una habilidad que representa tu naturaleza adaptable, capaz de cambiar de rol en cualquier momento del partido. Con esta habilidad puedes copiar y utilizar una pasiva activa dentro del campo (ya sea de un aliado o enemigo), manteniéndola sólo durante la jugada (un post). Puedes copiar todo tipo de pasivas, sin importar si son de tipo ofensivo, defensivo o mixtas. Como ventaja única por tu acondicionamiento físico superior, si una pasiva contiene características de Físico o Velocidad a ruletas de riesgo (como probabilidad de lesión), esa ruleta se ajusta automáticamente a 80% de no lesión y 20% de lesión.
+
+Ejecución:
+
+Para activar esta habilidad, debes redactar claramente qué pasiva copias (con nombre y fuente), usarla de forma contextual dentro de tu jugada, y hacer referencia explícita al uso de la habilidad como Camaleón. Tras la ejecución, no tiene cooldown, solo las habilidades de las pasivas que copias respetando su tiempo de enfriamiento de las habilidades usadas.
+
+Gyro Shot – Estilo del Camaleón
+
+Un disparo con efecto que cambia de trayectoria y se caracteriza por su precisión, a pesar de ser un tiro curvo no tan violento comparado a otros con estas características. La elevación que toma aparenta desviarse de la portería aparentando que se va fuera sin embargo desciende repentinamente entrando en la red reduciendo un -8 en la estadística del portero. Si un rival interviene en la trayectoria del tiro es forzado a Tiro vs Defensa con reducción de -20% en la estadística de tu oponente.
+
+Ejecución:
+
+Debes redactar como ejecutas el tiro con efecto que desciende en curva hacía la portería pareciendo que se va fuera, tienes que hacer mención de Gyro Shot – Estilo del Camaleón esperando 7 turnos globales de Cooldown una vez lo uses.
+
+Control Absorbente x Despeje Giratorio – Estilo del Camaleón
+
+Una técnica que redefine lo imposible: convertir un rechazo, un mal pase, o incluso una posición incómoda en una oportunidad brillante. El dominio del cuerpo y la técnica se fusionan para realizar un giro perfecto en el aire o el suelo, conectando con el balón en un disparo/pase giratorio que transforma en control absorbente. Has copiado con maestría el talento inhumano del control perfecto y la improvisación total, mediante esta habilidad anulas el enfrentamiento en un balón suelto, rechace o pase. Mediante un giro técnico, golpeas el balón sin importar el momento logrando mantener la fluidez y precisión de la jugada. Ya sea para asistir o despejar con elegancia, esta técnica convierte el terreno en una plataforma para la creatividad pura. Tu aumenta en +6 puntos en Pase al momento de usar esta habilidad hasta 2 veces como efecto acumulable. La dirección del pase puede adquirir efecto curvado o flotante a los 15m de distancia. Si tu equipo recupera el balón tras tu acción, ganan un bono temporal de +5 en Tiro, Pase y Regate durante esa misma jugada. La defensa que busque interceptar se ven forzados a -20% con duelo Defensa vs Pase.
+
+Ejecución:
+
+Para utilizar Control Absorbente x Despeje Giratorio – Estilo del Camaleón, debes narrar una jugada donde el balón te llegue en un ángulo o situación incómoda y tú, con elegancia y dominio técnico, conectes con él mediante un giro parcial o completo para transformar la situación. La acción puede ser usada como pase o tiro, y se debe hacer mención directa al uso de la habilidad. Una vez usada, la habilidad entra en su cooldown de 7 turnos globales.
+
+Defensa Asfixiante – Estilo Camaleón
+
+Has absorbido el instinto de un defensor que no da respiro. Esta técnica representa el dominio total de la presión corporal y el cierre de espacios al punto de eliminar por completo las rutas del rival. Tu cuerpo se convierte en una serpiente asfixiando su presa como una sombra que persigue y encierra a su presa, obligando a Regate vs Defensa, Tiro Vs Defensa o Defensa vs Pase, depende lo que se requiera el post. No se trata de quitar el balón directamente, sino de sofocar la libertad del atacante: niegas el pase, el giro y el espacio, ejecutando un marcaje tan ajustado que corta el oxígeno de la jugada sin hacer contacto. Tienes +12 puntos en Defensa y +10 en Físico mientras mantengas una marca asfixiante durante el enfrentamiento. Durante este enfrentamiento, si el rival no logra desmarcarse o ejecutar su acción con claridad, se le aplica una reducción de -20 puntos en la estadística que utilice (Regate, Pase o Tiro), siempre que tu narración muestra cómo reducir su margen de ejecución. Si el rival pierde la ruleta forzada de Regate vs Defensa o Pase vs Defensa o Tiro vs Defensa, obtienes un aumento temporal de +6 puntos en Pase o Regate (a elección) para la siguiente jugada ofensiva que realices.
+
+Ejecución:
+
+Para activar Defensa Asfixiante – Estilo Camaleón, tu narración debe reflejar un marcaje pegajoso, constante, sin dejar espacio para respirar. No buscas robar el balón en un solo movimiento, sino presionar con el cuerpo, cerrar líneas, negar la recepción y limitar el accionar del rival. Debe mencionarse el uso de la habilidad y detallar cómo ejecutas la presión. Tras su uso la habilidad entra en cooldown de 7 turnos globales.
+
+Movimiento de flujo
+
+Dragon Drive Shot – Estilo del Camaleón
+
+Este disparo no sigue patrones ni estructura, no es elegante, es salvaje, brutal y completamente egoísta. Una técnica creada por el deseo de romper la red sin importar el método. Mediante tu estilo adaptable, réplicas a la perfección el instinto animal contenido en un disparo inhumano: una patada desmedida donde la violencia y la precisión se combinan en una sola ejecución. Tu cuerpo toma la postura de una bestia, forzando el disparo como si tu pierna fuera una lanza viva. Tus músculos se tensan, tu visión se estrecha, y en ese instante, todo lo que no sea portería deja de existir. Has copiado el estilo ofensivo de una criatura salvaje que no piensa en fallar. Tu Tiro aumenta en +10 puntos al activar esta habilidad. La reducción de la Defensa del rival se reduce en -25% puntos durante el enfrentamiento y es forzado a Tiro vs Defensa.
+
+Ejecución:
+
+Debes hacer mención del uso de la habilidad en un balón que este rechazado o en pleno aire para hacer referencia a Tiro Dragón – Estilo del Camaleón rematando con un disparo feroz. Esta habilidad tiene 8 turnos globales de Cooldown.</p>
+      </div>
+    </div>
+    <div class="column">
+      <img src="imagen3.png" alt="Nagi Seishiro U20">
+      <div class="info">
+        <h3>Nagi Seishiro U20</h3>
+        <p>EDICIÓN BLUE LOCK ELEVEN VS SUB 20 DE JAPÓN
+
+Despertar del Genio Dormido de Seishiro Nagi
+
+Legendario
+
+(Pasiva de Estilo – Tiro)
+
+Eres un genio excepcional sobrado de mucho talento resultando ser un jugador capaz de controlar el balón sin importar la circunstancias o estar en una posición incómoda en la que te encuentres. Desde el inicio tienes un aumento de +5 en todas las estadísticas y tu instinto impredecible hace que cualquier jugada realizada sea totalmente incapaz de ser leída por un usuario de la meta visión. Tienes un control único que te permite matar y darle vida al balón haciendo maniobras que la mayoría de jugadores son incapaces de hacer por lo que tienes un +8 de Regate desde el inicio y cada vez que ganes en duelos de ruleta o anulación de Regate vs Defensa aumentas +3 puntos hasta un total de 4 veces (máximo 12 puntos). Tus disparos acompañado del control absoluto que tienes hacen que obtengas +10 de Tiro resultado de ser tu mejor arma +5 si recibes un pase exitoso en tu post (no acumulable), cada vez que ganes en duelos (sin que sea Regate vs Defensa o Defensa vs Pase) ganas +3 de tiro hasta un máximo de 6 veces (máximo 18 puntos). El increíble uso de tu control absorbente te permite interceptar tiros y pases con facilidad otorgando +7 de defensa, si logras ganar duelos de Tiro vs Defensa y Defensa vs Pase en ruleta o anulación sumas +5 de defensa hasta 3 veces (máximo 15 veces). Como extra, tienes +4 de Físico y +7 de Pase, eres un jugador muy flojo, pero con un buen Físico y tienes muy buena flexibilidad lo que te permite réplicas jugadas (no te pases, tienes huesos porcia), y como extra +3 en Velocidad por tu buen desplazamiento aunque no seas un velocista. No pueden rebajarte el Tiro, Regate ni la Defensa por otras pasivas (eso sí, los de Primera División a superior sí pueden hacerlo).
+
+Control absorbente x Volea
+
+Expones tu increíble instinto para anotar goles sin importar cuántos defensores estén encima tuya. Está habilidad consiste en que recibes un pase de tu compañero incluso estando en una posición incómoda o marcandote muy eres capaz de anular el duelo para finalizar un tiro al arco, ganas +8 de Tiro de manera permanente al ejecutar esta habilidad hasta 2 veces. Si tratan de interponerse, reduces -22% en la defensa forzando duelo Tiro vs Defensa.
+
+Ejecución:
+
+Está habilidad te permite realizar una volea con tu control absorbente sin que haya anulación en el duelo. Debes redactar el uso de la habilidad con la referencia Control absorbente x Volea y esperar luego de usarla 6 turnos globales de Cooldown.
+
+Tiro de volea falsa
+
+Eres capaz de convertir una jugada común en una ilusión absoluta. Esta técnica consiste en ejecutar una volea en apariencia directa y potente, solo para desviar en el último instante el ángulo, trayectoria o zona de impacto. Se trata de un disparo engañoso, ejecutado con una técnica tan precisa que incluso los jugadores con visión avanzada no logran predecir su desenlace. Al hacer esto, hay dos fases de esta habilidad. La primera es que obligas un duelo de Regate vs Defensa sin importar lo que haga aumentado +12 puntos permanente (solo una vez) a tu oponente y obligando a ruleta de lo mencionado reduciendo un -22% su Defensa. Una vez sales ganador, viene la segunda parte que realizas un Tiro una vez amagado y engañado a tu oponente con ese engaño pasando a patear directamente al arco reduciendo un -7 las estadísticas del portero con ese tiro final, extra si un defensor interviene en la jugada reduces un -18% sobre la defensa y velocidad forzando duelo de Tiro vs Velocidad y si gana el rival otra de Tiro vs Defensa.
+
+Ejecución:
+
+Debes redactar el uso de como engañar con un tiro de amago en uso de la habilidad y además de su referencia de Tiro de Volea Falsa. Entrará en un cooldown de 7 turnos globales de enfriamiento.
+
+Control absorbente x Regate
+
+Un regate que destruye a tus rivales usando tu increíble capacidad para control para burlar a tus rivales. Al redactar un regate llevas automáticamente a tus rivales a un encuentro Regate vs Defensa en qué reducen su capacidad de defensa en un -24% y si consigues derrotarlo aumentas +10 puntos en tiro durante tu jugada.
+
+Ejecución:
+
+Se debe redactar el regate y hacer referencia al uso de la habilidad con Control absorbente x Regate para saber de su uso, pese tener un uso la reducción que será contra el primer adversario el efecto de +10 puntos en tiros solo desaparece después del culmine de tu jugada. Después de todo eso la habilidad entra en su respectivo cooldown de 7 turnos globales.
+
+Aura de Muerte
+
+Eres un genio bastante completo cuando consigue encender ese fuego interior que se activa una vez encuentras un impulso de motivación y te sientes inconscientemente como si fueras el centro del mundo. En este estado, sientes que eres un dios en la cancha y te vuelves completamente impredecibles tus movimientos hasta para usuarios de una buena lectura del campo como Itoshi Rin e Isagi Yoichi. Para activar este estado, debes conseguir ganar una ruleta en un 1vs1 y una vez sales vencedor, obtienes un +6 en todas las estadísticas durante todo el post, y reducen un 10- en la estadísticas de ruleta que enfrentes a tus oponentes (en este estado puedes forzar ruletas). Esta habilidad no requiere un cooldown, pero en cada post requiere forzar mínimo un duelo para activarla obligatoriamente, si no queda anulada y no recibes los beneficios.
+
+Movimiento especial en estado de flujo
+
+Tiro Giratorio
+
+Eres capaz de convertir un segundo de quietud en una ejecución imposible. El Tiro Giratorio nace del talento de un genio que lee y reacciona a la jugada en una fracción de segundo, observando el balón solo una vez, justo antes de actuar. Sin detenerse a pensar, aplicas un toque técnico con el empeine al césped, elevando el balón ligeramente mientras ya giras tu cuerpo con precisión letal. El balón queda suspendido en el aire durante un instante crítico, justo cuando ejecutas un giro repentino del torso y piernas, rematando con fuerza y efecto. Está hábilidad te permite rematar sin que los rivales puedan hacer ruleta o anulación para interceptar haciendo automáticamente ruleta de gol. Reduces -13 al portero en esta jugada. Jugadores con meta visión si pueden reaccionar, pero se comen una reducción de -35% forzando Tiro vs Defensa en ruleta y esta habilidad tiene la ventaja que ninguna habilidad puede aplicar anulación para detenerlo llevándose a cabo una ruleta forzada de lo antes mencionado.
+
+Ejecución:
+
+Esta habilidad expone tu máxima capacidad se goleador y solo se permite usarse si hay un rechace quedando el balón en el aire o si te consiguen dar un pase aéreo. Debes hacer referencia a Mucho gusto Japón, yo soy… ¡Seishiro Nagi!. Esta habilidad tiene cooldown, de 9 turnos globales al usarse y esperando ese tiempo para usarse.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+// Crear flores
+const flowerBg = document.getElementById('flower-bg');
+for(let i=0;i<40;i++){
+  const f = document.createElement('div');
+  f.className='flower';
+  f.style.left=Math.random()*100+'vw';
+  f.style.animationDuration=(10 + Math.random()*10)+'s';
+  f.style.animationDelay=Math.random()*10+'s';
+  f.style.width=5 + Math.random()*20+'px';
+  f.style.height=f.style.width;
+  flowerBg.appendChild(f);
+}
+
+// Loader
+let percent = 0;
+const loaderFill = document.getElementById('loader-fill');
+const percentText = document.getElementById('percent');
+const loader = document.getElementById('loader');
+const mainContent = document.getElementById('main-content');
+let loading = setInterval(() => {
+  percent += Math.floor(Math.random()*5)+1;
+  if(percent>100) percent=100;
+  loaderFill.style.width = percent+'%';
+  percentText.textContent = percent+'%';
+  if(percent>=100){ 
+    clearInterval(loading); 
+    loader.style.display='none'; 
+    mainContent.classList.remove('hidden'); 
+    startStatsAnimation(); 
+    startFillBars(); 
+  }
+},100);
+
+// Stats animados
+function startStatsAnimation() {
+  document.querySelectorAll('.stat-number').forEach(stat=>{
+    const target=+stat.dataset.target;
+    let count=0;
+    const step=Math.ceil(target/50);
+    const interval=setInterval(()=>{
+      count+=step;
+      if(count>=target){ stat.textContent=target; clearInterval(interval);}
+      else stat.textContent=count;
+    },30);
+  });
+}
+
+// Llenado de barras
+function startFillBars() {
+  document.querySelectorAll('.stat-fill').forEach(fill=>{
+    const target = +fill.dataset.fill;
+    let width = 0;
+    const interval = setInterval(()=>{
+      width++;
+      if(width>=target){ fill.style.width = target + '%'; clearInterval(interval);}
+      else fill.style.width = width + '%';
+    },20);
+  });
+}
+
+// Música
+const musicBtn = document.getElementById('music-btn');
+const music = document.getElementById('music');
+let playing = false;
+musicBtn.addEventListener('click',()=>{
+  if(!playing){ music.play(); musicBtn.textContent='⏸ Pausar'; }
+  else{ music.pause(); musicBtn.textContent='🎵 Reproducir'; }
+  playing = !playing;
+});
+</script>
+
+</body>
+</html>
